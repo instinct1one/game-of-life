@@ -1,9 +1,5 @@
 pipeline {
     agent { label 'OPEN-JDK8' }
-    tools {
-        maven 'MVN-3.6'
-        jdk 'OPENJDK-8'
-    }
     stages {
         stage('Clone Repo') {
             steps {
@@ -15,11 +11,17 @@ pipeline {
             steps {
                 sh 'mvn clean package'
             }
+        }
+        stage('Publish') {
+            steps {
+                archiveArtifacts artifacts: '**/*.jar'
+            }
             post {
-                always {
-                    junit '**/surefire-reports/**/*.xml' 
+                success {
+                    junit '**/surefire-reports/**/*.xml'
+                 }
+            
                 }
+            }  
         }
     }
-}
-}
