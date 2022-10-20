@@ -1,14 +1,25 @@
-node("OPEN-JDK8") {
-    stage("vcs") {
-      git branch: 'master', url: 'https://github.com/instinct1one/game-of-life.git'
+pipeline {
+    agent { label 'OPEN-JDK8' }
+    tools {
+        maven 'MVN-3.6'
+        jdk 'OPENJDK-8'
     }
-    stage("build") {
-        sh 'mvn package'
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git url: "https://github.com/instinct1one/game-of-life.git", 
+                branch: "master"
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+            post {
+                always {
+                    junit '**/surefire-reports/**/*.xml' 
+                }
+        }
     }
-    stage("archive results") {
-        junit '**/surefire-reports/*.xml'
-    }
-    stage("clean") {
-        cleanWs cleanWhenAborted: false, cleanWhenFailure: false, cleanWhenNotBuilt: false, cleanWhenUnstable: false
-    }
+}
 }
