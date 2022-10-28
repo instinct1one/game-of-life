@@ -1,5 +1,9 @@
 pipeline {
     agent { label 'OPEN-JDK8' }
+    tools {
+        maven 'MVN'
+        jdk 'JDK11'
+    }
     stages {
         stage('Clone Repo') {
             steps {
